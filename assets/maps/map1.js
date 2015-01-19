@@ -1,20 +1,36 @@
+
+var map = {
+
+  width: 900,
+  height: 450,
+
+  player: {
+
+    x: 500,
+    y: 350
+
+  }
+
+};
+
+
 var boxes = [{
   x: 0,
   y: 0,
   width: 10,
-  height: canvas.height
+  height: map.height
 },
 {
   x: 0,
-  y: height - 2,
-  width: canvas.width,
+  y: map.height - 2,
+  width: map.width,
   height: 50
 },
 {
-  x: width - 10,
+  x: map.width - 10,
   y: 0,
   width: 50,
-  height: canvas.height
+  height: map.height
 },
 
 {

@@ -5,11 +5,11 @@
 
 var canvas = document.getElementById("canvas"),
 ctx = canvas.getContext("2d"),
-width = 900,
-height = 450,
+width = map.width,
+height = map.height,
 player = {
-  x: 500,
-  y: 350,
+  x: map.player.x,
+  y: map.player.y,
   width: 5,
   height: 5,
   speed: 3,
