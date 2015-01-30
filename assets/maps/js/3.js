@@ -53,10 +53,18 @@ var map = {
 
   rewards: [
 
-    // star
+    // box
     {
-      x: 62,
-      y: 77,
+      x: 104,
+      y: 360,
+      width: 10,
+      height: 10,
+      profile: "star"
+    },
+         // star
+    {
+      x: 48,
+      y: 79,
       width: 10,
       height: 10,
       profile: "star"

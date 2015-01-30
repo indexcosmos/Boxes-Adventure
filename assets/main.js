@@ -2,9 +2,9 @@
 
 var Game = {
 
-  hole_color: "transparent",
-  box_color: "transparent",
-  reward_color: "transparent",
+  hole_color: "blue",
+  box_color: "olive",
+  reward_color: "red",
 
   canvas: null,
   ctx: null,
