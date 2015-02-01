@@ -341,8 +341,6 @@ var Game = {
 
       if(Game.camera.locked) speed *= Game.grid.width;
 
-      console.log(Game.camera.locked, speed);
-
       // right arrow
       if (Game.keys[39] || Game.keys[68]) {
 
