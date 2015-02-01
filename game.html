@@ -7,12 +7,25 @@
   <script src="assets/main.js"></script>
 </head>
 <body>
+    
   <h3>A, D or Arrow keys to move, W or space to jump</h3>
-  <canvas id="canvas" style="background:url('assets/maps/images/2.png') no-repeat;"></canvas>
-  <script src="assets/maps/js/2.js"></script>
+    
+  <canvas id="canvas"></canvas>
+    
   <script>
-      Game.init(map, document.getElementById("canvas"));
-
+      
+      // load map file
+      var map_file = getParameterByName('map');      
+      if(!map_file) map_file = 1;      
+      var script = document.createElement("script");      
+      script.src = 'assets/maps/js/'+map_file+'.js';      
+      document.body.appendChild( script );
+      
+      // load canvas
+      var canvas = document.getElementById("canvas");
+      Game.init(canvas);
+      
+      // listen to keystrokes
       document.body.addEventListener("keydown", function (e) {
         Game.keys[e.keyCode] = true;
       });
@@ -20,7 +33,23 @@
       document.body.addEventListener("keyup", function (e) {
         Game.keys[e.keyCode] = false;
       });
+      
+      // load game function
+      var load_game = function () {
+          
+          // remove click to start
+          canvas.removeEventListener('mousedown', load_game);
+        
+          Game.start(map);
+          
+          Game.update();
+          
+      };
 
-      window.addEventListener("load", Game.update);      
+      // click to start
+      canvas.addEventListener('mousedown', load_game);
+      
+      // load start screen
+      window.addEventListener("load", Game.start_screen);      
   </script>
 </body>

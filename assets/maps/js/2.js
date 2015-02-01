@@ -6,15 +6,18 @@ var map = {
   height: 450,
   friction: 0.8,
   gravity: 0.3,
+  background: "assets/maps/images/2.png",
+  start_screen: "assets/maps/images/2_start.png",
+  next_map: "3",
 
   player: {
 
-    x: 500,
-    y: 350,
+    x: 20,
+    y: 20,
     width: 38,
     height: 38,
     speed: 3,
-    dir: "l",
+    dir: "r",
     start_profile: "box",
     finish_profile: "box"
 

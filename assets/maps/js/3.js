@@ -6,6 +6,9 @@ var map = {
   height: 450,
   friction: 0.8,
   gravity: 0.3,
+  background: "assets/maps/images/3.png",
+  start_screen: "assets/maps/images/3_start.png",
+  next_map: "4",
 
   player: {
 
@@ -53,13 +56,13 @@ var map = {
 
   rewards: [
 
-    // box
+    // square
     {
       x: 104,
       y: 360,
       width: 10,
       height: 10,
-      profile: "star"
+      profile: "square"
     },
          // star
     {

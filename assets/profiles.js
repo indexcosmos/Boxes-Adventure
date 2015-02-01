@@ -1,5 +1,6 @@
 
 var profiles = {
+    
   box: function(){
 
 
@@ -11,7 +12,18 @@ var profiles = {
 
 
   },
-  star: function(x,y,width,height){
+    
+  square: function(map){
+
+    Game.player.jump = 1.0;
+    Game.player.double_jump = 1.0;
+      
+    if(!rezzed.length) Game.player.rez_limit = map.player.rez_limit;
+
+
+  },
+    
+  star: function(){
 
     Game.player.jump = 2.0;
     Game.player.double_jump = 1.2;
@@ -19,7 +31,7 @@ var profiles = {
 
 
   },
-  circle: function(x,y,width,height){
+  circle: function(){
 
     Game.keys[38] = true;
     Game.player.jump = 1.5;
@@ -27,7 +39,6 @@ var profiles = {
 
 
   }
-
 
 };
 

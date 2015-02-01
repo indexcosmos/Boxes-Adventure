@@ -2,9 +2,9 @@
 
 var Game = {
 
-  hole_color: "blue",
-  box_color: "olive",
-  reward_color: "red",
+  hole_color: "transparent",
+  box_color: "transparent",
+  reward_color: "transparent",
 
   canvas: null,
   ctx: null,
@@ -24,31 +24,53 @@ var Game = {
     grounded: false,
   },
 
-  init: function(map, canvas){
+  init: function(canvas){
 
     canvas.addEventListener("mousedown", Game.click, false);
+
+    this.canvas = canvas;
+      
+    this.ctx = canvas.getContext("2d");
+      
+  },
+
+  start_screen: function(){
+      
+      //called once to create start screen    
+      Game.set_background(this.map.start_screen);
+    
+  },
+    
+  start: function(){
+      
+    this.canvas.width = map.width;
+    this.canvas.height = map.height;
     this.friction = map.friction;
     this.gravity = map.gravity;
     this.player.x = map.player.x;
     this.player.y = map.player.y;
-    this.player.face = map.player.face;
+    this.player.dir = map.player.dir;
     this.player.width = map.player.width;
     this.player.height = map.player.height;
     this.player.speed = map.player.speed;
     this.player.profile = map.player.start_profile;
     this.player.win = map.player.finish_profile;
-    this.player.rez_limit = map.player.finish_profile;
 
-    this.canvas = canvas;
-    this.ctx = canvas.getContext("2d");
-    this.canvas.width = map.width;
-    this.canvas.height = map.height;
-
+    this.map = map;
     this.boxes = map.boxes;
     this.rewards = map.rewards;
     this.hole = map.hole;
+  
+      //called once to clean up start screen
+      Game.set_background(this.map.background);
+  
   },
-
+    
+  set_background: function(background){
+  
+     this.canvas.setAttribute('style', "background:url('"+background+"') no-repeat;");
+  },
+    
   update: function() {
 
     Game.ctx.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
@@ -69,7 +91,7 @@ var Game = {
 
     Game.handle_keystrokes();
 
-    profiles[Game.player.profile]();
+    profiles[Game.player.profile](this.map);
 
     Game.draw_player(Game.player.x, Game.player.y, Game.player.width, Game.player.height);
 
@@ -119,7 +141,7 @@ var Game = {
 
     if(typeof dir == "string" && Game.player.profile == Game.player.win){
 
-      window.location ='';
+      window.location = "?map="+this.map.next_map;
 
     }
 
@@ -308,3 +330,8 @@ var Game = {
   var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
   window.requestAnimationFrame = requestAnimationFrame;
 })();
+
+function getParameterByName(name) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
