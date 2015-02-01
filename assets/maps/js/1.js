@@ -4,6 +4,10 @@ var map = {
 
   width: 900,
   height: 450,
+  grid: {
+    width: 1,
+    height: 1
+  },
   friction: 0.8,
   gravity: 0.3,
   background: "assets/maps/images/1.png",
@@ -16,7 +20,7 @@ var map = {
     y: 350,
     width: 38,
     height: 38,
-    speed: 3,
+    speed: 5,
     dir: "l",
     start_profile: "box",
     finish_profile: "circle"

@@ -2,10 +2,19 @@
 
 var Game = {
 
-  hole_color: "transparent",
-  box_color: "transparent",
-  reward_color: "transparent",
+  hole_color: "black",
+  box_color: "black",
+  reward_color: "black",
 
+  grid: {
+    width: 1,
+    height: 1
+  },
+  camera: {
+    x: 0,
+    y: 0,
+    locked: true
+  },
   canvas: null,
   ctx: null,
   keys: [],
@@ -14,6 +23,7 @@ var Game = {
   hole: null,
   player: {
     dir: "l",
+    collide: 0,
     crouching: false,
     velX: 0,
     velY: 0,
@@ -21,7 +31,7 @@ var Game = {
     rez_limit: 0,
     double_jump: 1.2,
     jumping: false,
-    grounded: false,
+    grounded: false
   },
 
   init: function(canvas){
@@ -29,30 +39,34 @@ var Game = {
     canvas.addEventListener("mousedown", Game.click, false);
 
     this.canvas = canvas;
-      
+
     this.ctx = canvas.getContext("2d");
-      
+
   },
 
   start_screen: function(){
-      
-      //called once to create start screen    
-      Game.set_background(this.map.start_screen);
-    
+
+    //called once to create start screen
+    Game.set_background(this.map.start_screen);
+
   },
-    
+
   start: function(){
-      
+
     this.canvas.width = map.width;
     this.canvas.height = map.height;
+    this.grid.width = map.grid.width;
+    this.grid.height = map.grid.height;
     this.friction = map.friction;
     this.gravity = map.gravity;
-    this.player.x = map.player.x;
-    this.player.y = map.player.y;
+    this.player.x = map.player.x / map.grid.width;
+    this.player.y = map.player.y / map.grid.height;
+    this.camera.x = this.player.x;
+    //this.camera.y = map.player.y;
     this.player.dir = map.player.dir;
     this.player.width = map.player.width;
     this.player.height = map.player.height;
-    this.player.speed = map.player.speed;
+    this.player.speed = map.player.speed / this.grid.width;
     this.player.profile = map.player.start_profile;
     this.player.win = map.player.finish_profile;
 
@@ -60,18 +74,20 @@ var Game = {
     this.boxes = map.boxes;
     this.rewards = map.rewards;
     this.hole = map.hole;
-  
-      //called once to clean up start screen
-      Game.set_background(this.map.background);
-  
+
+    //called once to clean up start screen
+    Game.set_background(this.map.background);
+
   },
-    
+
   set_background: function(background){
-  
-     this.canvas.setAttribute('style', "background:url('"+background+"') no-repeat;");
+
+    this.canvas.setAttribute('style', "background:url('"+background+"') no-repeat;");
   },
-    
+
   update: function() {
+
+    if(Game.player.collide) Game.player.collide -= 1;
 
     Game.ctx.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
 
@@ -97,39 +113,38 @@ var Game = {
 
     requestAnimationFrame(Game.update);
   },
-    
-    click: function(event)
-    {
-        if(Game.player.rez_limit > 0){
-            
-            Game.player.rez_limit--;
-            
-            rezzed.push({        
 
-                type: 'blue_box',
-                x: event.pageX,
-                y: event.pageY,
+  click: function(event){
+    if(Game.player.rez_limit > 0){
 
-            });
+      Game.player.rez_limit--;
 
-        }
-        
-    },
-    
-    collide: function(dir)
-    {
-        
-      if (dir === "l" || dir === "r") {
-        Game.player.velX = 0;
-        Game.player.jumping = false;
-      } else if (dir === "b") {
-        Game.player.grounded = true;
-        Game.player.jumping = false;
-      } else if (dir === "t") {
-        Game.player.velY *= -1;
-      } 
-        
-    },
+      rezzed.push({
+
+        type: 'blue_box',
+        x: event.pageX,
+        y: event.pageY,
+
+      });
+
+    }
+
+  },
+
+  collide: function(dir){
+
+    if (dir === "l" || dir === "r") {
+      Game.player.velX = 0;
+      Game.player.jumping = false;
+      Game.player.collide = 10;
+    } else if (dir === "b") {
+      Game.player.grounded = true;
+      Game.player.jumping = false;
+    } else if (dir === "t") {
+      Game.player.velY *= -1;
+    }
+
+  },
 
   draw_hole: function(){
 
@@ -146,28 +161,28 @@ var Game = {
     }
 
   },
-    
+
   draw_rezzables: function(){
-      
+
     for (var m in rezzed) {
 
-        var x = rezzed[m].x;
-        var y = rezzed[m].y;
-        //var velX = rezzed[m].velX;
-        //var velY = rezzed[m].velY;
+      var x = rezzed[m].x;
+      var y = rezzed[m].y;
+      //var velX = rezzed[m].velX;
+      //var velY = rezzed[m].velY;
 
-        var coordinates = rezzables[rezzed[m]['type']](Game.ctx, x, y);
+      var coordinates = rezzables[rezzed[m]['type']](Game.ctx, x, y);
 
-        if(coordinates){
+      if(coordinates){
 
-            var dir = Game.colCheck(Game.player, coordinates, true);
+        var dir = Game.colCheck(Game.player, coordinates, true);
 
-            Game.collide(dir);
+        Game.collide(dir);
 
-        }
-    }      
-      
-      
+      }
+    }
+
+
   },
 
   draw_boxes: function(){
@@ -176,17 +191,43 @@ var Game = {
 
     Game.ctx.fillStyle = Game.box_color;
 
-    for (var i = 0; i < Game.boxes.length; i++) {
+    for (var b = 0; b < Game.boxes.length; b++) {
 
-      Game.ctx.fillRect(Game.boxes[i].x, Game.boxes[i].y, Game.boxes[i].width, Game.boxes[i].height);
+      var vx = 0;
 
-      var dir = Game.colCheck(Game.player, Game.boxes[i], true);
+      if(this.grid.width > 1) {
+
+        //if(this.camera.x > 0) vx = this.camera.x * (-0.78 * this.grid.width);
+        if(this.camera.x > 0) vx = this.camera.x * (-0.71 * this.grid.width);
+
+        var max_width = (this.map.width * (this.grid.width - 1)) * -1;
+
+
+        if(vx < max_width){
+          vx = max_width;
+          this.camera.locked = true;
+        } else {
+          this.camera.locked = false;
+        }
+
+      }
+
+      var box = {
+        x: Game.boxes[b].x + vx,
+        y: Game.boxes[b].y,//+ this.camera.y,
+        width: Game.boxes[b].width,
+        height: Game.boxes[b].height
+      };
+
+      Game.ctx.fillRect(box.x, box.y, box.width, box.height);
+
+      var dir = Game.colCheck(Game.player, box, true);
 
       Game.collide(dir);
 
     }
   },
- 
+
   draw_rewards: function(){
 
     Game.ctx.fillStyle = Game.reward_color;
@@ -212,45 +253,45 @@ var Game = {
 
     if(Game.player.dir == 'l'){
 
-        if(Game.player.crouching){
-            
-            avatar.down_left(ctx, x, y);
-            
-        } else {
-            
-            avatar.left(ctx, x, y);      
-            
-        }
-    
+      if(Game.player.crouching){
+
+        avatar.down_left(ctx, x, y);
+
+      } else {
+
+        avatar.left(ctx, x, y);
+
+      }
+
     } else if(Game.player.dir == 'r'){
 
-        if(Game.player.crouching){
-            
-            avatar.down_right(ctx, x, y);
-            
-        } else {
-            
-            avatar.right(ctx, x, y);      
-            
-        }
-    }   
-      
+      if(Game.player.crouching){
+
+        avatar.down_right(ctx, x, y);
+
+      } else {
+
+        avatar.right(ctx, x, y);
+
+      }
+    }
+
   },
 
   colCheck: function(shapeA, shapeB, colide) {
     // get the vectors to check against
     var vX = (shapeA.x + (shapeA.width / 2)) - (shapeB.x + (shapeB.width / 2)),
-    vY = (shapeA.y + (shapeA.height / 2)) - (shapeB.y + (shapeB.height / 2)),
+        vY = (shapeA.y + (shapeA.height / 2)) - (shapeB.y + (shapeB.height / 2)),
     // add the half widths and half heights of the objects
-    hWidths = (shapeA.width / 2) + (shapeB.width / 2),
-    hHeights = (shapeA.height / 2) + (shapeB.height / 2),
-    colDir = null;
+        hWidths = (shapeA.width / 2) + (shapeB.width / 2),
+        hHeights = (shapeA.height / 2) + (shapeB.height / 2),
+        colDir = null;
 
     // if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
     if (Math.abs(vX) < hWidths && Math.abs(vY) < hHeights) {
       // figures out on which side we are colliding (top, bottom, left, or right)
       var oX = hWidths - Math.abs(vX),
-      oY = hHeights - Math.abs(vY);
+          oY = hHeights - Math.abs(vY);
       if (oX >= oY) {
         if (vY > 0) {
           colDir = "t";
@@ -273,12 +314,12 @@ var Game = {
   },
 
   handle_keystrokes: function(){
-      
+
     Game.player.crouching = false;
-    
+
     // down arrow
     if (Game.keys[40] || Game.keys[83]) {
-        Game.player.crouching = true;
+      Game.player.crouching = true;
     }
 
     // up arrow or space
@@ -290,37 +331,62 @@ var Game = {
           jump = Game.player.jump;
         }
         Game.player.grounded = false;
-        Game.player.velY = -Game.player.speed * jump;
+        Game.player.velY = -(Game.player.speed * this.grid.width) * jump;
       }
-    }
-      
-    // right arrow
-    if (Game.keys[39] || Game.keys[68]) {
-      
-      if (Game.player.velX < Game.player.speed) {
-        Game.player.velX++;
-      }
-      Game.player.dir = 'r';
-    }
-      
-    // left arrow
-    if (Game.keys[37] || Game.keys[65]) {
-      
-      if (Game.player.velX > -Game.player.speed) {
-        Game.player.velX--;
-      }
-      Game.player.dir = 'l';
     }
 
-    Game.player.velX *= Game.friction;
-    Game.player.velY += Game.gravity;
+    if (!Game.player.collide) {
+
+      var speed = Game.player.speed;
+
+      if(Game.camera.locked) speed *= Game.grid.width;
+
+      // right arrow
+      if (Game.keys[39] || Game.keys[68]) {
+
+        if (Game.player.velX < speed) {
+          Game.player.velX += speed * 0.1;
+        }
+        Game.player.dir = 'r';
+      }
+
+      // left arrow
+      if (Game.keys[37] || Game.keys[65]) {
+
+        if (Game.player.velX > -speed) {
+          Game.player.velX -= speed * 0.1;
+        }
+        Game.player.dir = 'l';
+      }
+
+      Game.player.velX *= Game.friction;
+      Game.player.velY += Game.gravity;
+
+    }
 
     if(Game.player.grounded){
       Game.player.velY = 0;
     }
 
+
     Game.player.x += Game.player.velX;
     Game.player.y += Game.player.velY;
+
+    Game.camera.x = Math.floor(Game.player.x);
+
+    var max_width = Game.map.width;
+    var min_width = 0;
+
+    if(Game.camera.x > max_width){
+      Game.camera.x = max_width;
+    } else if(Game.camera.x < min_width){
+      Game.camera.x = min_width;
+    }
+
+    //if(Game.camera.y > max_height) Game.camera.y = max_height;
+    //else if(Game.camera.y < 0) Game.camera.y = 0;
+
+
   }
 
 };
@@ -332,6 +398,6 @@ var Game = {
 })();
 
 function getParameterByName(name) {
-    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
-    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+  var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+  return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }
