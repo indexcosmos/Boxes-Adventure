@@ -4,6 +4,10 @@ var map = {
 
   width: 900,
   height: 450,
+  grid: {
+    width: 1,
+    height: 1
+  },
   friction: 0.8,
   gravity: 0.3,
   background: "assets/maps/images/2.png",
