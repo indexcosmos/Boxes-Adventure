@@ -1,6 +1,11 @@
-# Boxes-Adventure
-Introduction
-Game Play
-Objectives
-Solve Maps
+# Boxes-Adventure 
+
+Introduction 
+
+Game Play 
+
+Objectives 
+
+Solve Maps 
+
 Accomplishments
