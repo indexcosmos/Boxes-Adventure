@@ -5,13 +5,13 @@ var map = {
   width: 900,
   height: 450,
   grid: {
-    width: 1,
-    height: 1
+  width: 1,
+  height: 1
   },
   friction: 0.8,
   gravity: 0.3,
   background: "assets/maps/images/1.png",
-  start_screen: "assets/maps/images/1_start.png",
+  //start_screen: "assets/maps/images/1_start.png",
   next_map: "2",
 
   player: {
@@ -53,41 +53,42 @@ var map = {
     },
     // box 1
     {
-      x: 325,
-      y: 345,
+      x: 283,
+      y: 340,
       width: 50,
       height: 50
     },
 
     // box 2
     {
-      x: 231,
-      y: 270,
+      x: 172,
+      y: 251,
       width: 50,
       height: 50
     },
 
     // box 3
     {
-      x: 328,
-      y: 209,
+      x: 297,
+      y: 176,
       width: 50,
       height: 50
     },
 
       // box 4
     {
-      x: 477,
-      y: 140,
+      x: 450,
+      y: 110,
       width: 50,
       height: 50
     },
 
     // box 5
     {
-      x: 631,
-      y: 140,
-      width: 195,
+      x: 622
+        ,
+      y: 110,
+      width: 220,
       height: 48
     },
 
@@ -98,7 +99,7 @@ var map = {
 
     // star
     {
-      x: 275,
+      x: 169,
       y: 161,
       width: 10,
       height: 10,
@@ -107,8 +108,8 @@ var map = {
 
     // circle
     {
-      x: 571,
-      y: 75,
+      x: 552,
+      y: 50,
       width: 10,
       height: 10,
       profile: "circle"
@@ -117,9 +118,9 @@ var map = {
 
   ],
 
-  hole: {
-    x: 752,
-    y: 87,
+  home: {
+    x: 723,
+    y: 50,
     width: 40,
     height: 40
   }

@@ -1,18 +1,26 @@
 <!DOCTYPE HTML>
 <head>
   <title>Boxes Adventure</title>
-  <link href="assets/style.css" rel="stylesheet" type="text/css" />
+    
+<link href="assets/style.css" rel="stylesheet" type="text/css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
   <script src="assets/profiles.js"></script>
   <script src="assets/rezzables.js"></script>
   <script src="assets/main.js"></script>
 </head>
 <body>
     
-  <h3>A, D or Arrow keys to move, W or space to jump</h3>
-    
   <canvas id="canvas"></canvas>
     
+  <h3>A, D or Arrow keys to move, W or space to jump</h3>
+    
+   
   <script>
+      
+      // manually force window orientation event to fire.
+      $.mobile.orientationChangeEnabled = false
       
       // load map file
       var map_file = getParameterByName('map');      

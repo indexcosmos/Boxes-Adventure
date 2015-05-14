@@ -2,7 +2,7 @@
 
 var Game = {
 
-  hole_color: "black",
+  home_color: "black",
   box_color: "black",
   reward_color: "black",
 
@@ -20,7 +20,7 @@ var Game = {
   keys: [],
   boxes: [],
   rewards: [],
-  hole: null,
+  home: null,
   player: {
     dir: "l",
     collide: 0,
@@ -48,6 +48,10 @@ var Game = {
 
     //called once to create start screen
     Game.set_background(this.map.start_screen);
+    this.canvas.width = map.width;
+    this.canvas.height = map.height;
+    this.grid.width = map.grid.width;
+    this.grid.height = map.grid.height;
 
   },
 
@@ -73,7 +77,7 @@ var Game = {
     this.map = map;
     this.boxes = map.boxes;
     this.rewards = map.rewards;
-    this.hole = map.hole;
+    this.home = map.home;
 
     //called once to clean up start screen
     Game.set_background(this.map.background);
@@ -102,8 +106,8 @@ var Game = {
     // draw rezzables
     Game.draw_rezzables();
 
-    //draw_hole
-    Game.draw_hole();
+    //draw_home
+    Game.draw_home();
 
     Game.handle_keystrokes();
 
@@ -146,13 +150,13 @@ var Game = {
 
   },
 
-  draw_hole: function(){
+  draw_home: function(){
 
-    Game.ctx.fillStyle = Game.hole_color;
+    Game.ctx.fillStyle = Game.home_color;
 
-    Game.ctx.fillRect(Game.hole.x, Game.hole.y, Game.hole.width, Game.hole.height);
+    Game.ctx.fillRect(Game.home.x, Game.home.y, Game.home.width, Game.home.height);
 
-    var dir = Game.colCheck(Game.player, Game.hole, false);
+    var dir = Game.colCheck(Game.player, Game.home, false);
 
     if(typeof dir == "string" && Game.player.profile == Game.player.win){
 
