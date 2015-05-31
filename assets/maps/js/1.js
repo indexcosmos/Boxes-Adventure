@@ -11,7 +11,7 @@ var map = {
   friction: 0.8,
   gravity: 0.3,
   background: "assets/maps/images/1.png",
-  //start_screen: "assets/maps/images/1_start.png",
+  start_screen: "assets/maps/images/1_start.png",
   next_map: "2",
 
   player: {
