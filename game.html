@@ -2,20 +2,25 @@
 <html>
 <head>
   <title>Boxes Adventure</title>
-<meta name=viewport content="width=device-width, initial-scale=1">   
-<link href="assets/style.css" rel="stylesheet" type="text/css" />
-   
+<meta name="viewport" content="width=80, initial-scale=1, user-scalable=no, width=device-width">   
+   <style>
+      @viewport{
+        width: device-width;
+      }
+
+   </style>
 </head>
 <body>
 
-  <canvas id="canvas"></canvas>
+  <canvas id="canvas" style="border:1px solid black;"></canvas>
     
   <h3>A, D or Arrow keys to move, W or space to jump</h3>
     
    
   <script>
 
-// main.js
+
+// main
 var Game = {
 
   home_color: "transparent",
@@ -411,7 +416,7 @@ var Game = {
 
 };
 
-// profiles.js
+// profiles
 var profiles = {
     
   box: function(){
@@ -755,7 +760,7 @@ var avatar = {
     
 };
 
-// rezzables.js
+// rezzables
 
 var rezzed = [];
 
