@@ -15,10 +15,19 @@
   <canvas id="canvas" style="border:1px solid black;"></canvas>
     
   <h3>A, D or Arrow keys to move, W or space to jump</h3>
-    
-   
+
+
   <script>
 
+    // websocket tests
+  var conn = new WebSocket('ws://localhost:8081');
+  conn.onopen = function(e) {
+      console.log("Connection established!");
+  };
+
+  conn.onmessage = function(e) {
+      console.log(e.data);
+  };
 
 // main
 var Game = {
