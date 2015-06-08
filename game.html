@@ -16,18 +16,9 @@
 
 <h3>A, D or Arrow keys to move, W or space to jump</h3>
 
-
 <script>
 
-    // websocket tests
-    var conn = new WebSocket('ws://localhost:8081');
-    conn.onopen = function(e) {
-        console.log("Connection established!");
-    };
-
-    conn.onmessage = function(e) {
-        console.log(e.data);
-    };
+    var CURRENT_USER = Math.random().toString(36).substr(2, 9);
 
     // main
     var Game = {
@@ -202,10 +193,11 @@
 
                 var x = rezzed[m].x;
                 var y = rezzed[m].y;
+                var args = rezzed[m].args;
                 //var velX = rezzed[m].velX;
                 //var velY = rezzed[m].velY;
 
-                var coordinates = rezzables[rezzed[m]['type']](Game.ctx, x, y);
+                var coordinates = rezzables[rezzed[m]['type']](Game.ctx, x, y, args);
 
                 if(coordinates){
 
@@ -256,6 +248,9 @@
                 Game.ctx.fillRect(box.x, box.y, box.width, box.height);
 
                 var dir = Game.colCheck(Game.player, box, true);
+
+
+//                console.log(dir);
 
                 Game.collide(dir);
 
@@ -461,9 +456,57 @@
 
     };
 
+    var locations = {
+
+        _x: 0,
+
+        _y: 0,
+
+        x: function (x) {
+
+            var difference = locations.difference(this._x, x);
+
+            this._x = x;
+
+            return difference;
+
+        },
+
+        y: function (y) {
+
+            var difference = locations.difference(locations._y, y);
+
+            locations._y = y;
+
+            return difference;
+
+        },
+
+        difference: function (a, b) {
+
+            return Math.abs(a - b);
+
+        }
+
+    };
+
+
     var avatar = {
 
-        left: function(ctx, x, y){
+        report: function(dir, x, y){
+
+            if(locations.x(x) > 0.5 || locations.y(y) > 0.5){
+
+                conn.send(JSON.stringify({sig: CURRENT_USER, dir: dir, x: x, y: y}));
+
+            }
+
+        },
+
+        left: function(ctx, x, y, is_remote){
+
+            // report location
+            if(!is_remote) avatar.report('left', x, y);
 
             // player_l
             ctx.save();
@@ -535,7 +578,10 @@
 
         },
 
-        right: function(ctx, x, y){
+        right: function(ctx, x, y, is_remote){
+
+            // report location
+            if(!is_remote) avatar.report('right', x, y);
 
             // player_r
             ctx.save();
@@ -607,8 +653,10 @@
 
         },
 
+        down_left: function(ctx, x, y, is_remote){
 
-        down_left: function(ctx, x, y){
+            // report location
+            if(!is_remote) avatar.report('down_left', x, y);
 
             // player_down_l
             y+=6;
@@ -693,7 +741,10 @@
 
         },
 
-        down_right: function(ctx, x, y){
+        down_right: function(ctx, x, y, is_remote){
+
+            // report location
+            if(!is_remote) avatar.report('down_right', x, y);
 
             // player_down_r
             y+=6;
@@ -774,6 +825,12 @@
     var rezzed = [];
 
     var rezzables = {
+
+        avatar: function(ctx, x, y, dir){
+
+            avatar[dir](ctx, x, y, true);
+
+        },
 
         blue_box: function(ctx, x, y){
 
@@ -872,7 +929,45 @@
 
     // load canvas
     var canvas = document.getElementById("canvas");
+
     Game.init(canvas);
+
+    // open websocket connection
+    var conn = new WebSocket('ws://localhost:8081');
+
+    conn.onopen = function(e) {
+        //console.log("Connection established!");
+    };
+
+    conn.onmessage = function(e) {
+
+        var response = JSON.parse(e.data);
+
+        for (var m in rezzed) {
+
+            var sig = rezzed[m].sig;
+
+            // update existing avatar
+            if(response.sig == sig){
+                rezzed[m].x = response.x;
+                rezzed[m].y = response.y;
+                return;
+
+            }
+
+        }
+
+        // add new avatar
+        rezzed.push({
+            type: 'avatar',
+            sig: response.sig,
+            args: response.dir,
+            x: response.x,
+            y: response.y
+        });
+
+    };
+
 
     // listen to keystrokes
     document.body.addEventListener("keydown", function (e) {
@@ -904,6 +999,8 @@
         var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
         return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
     }
+
+
     // click to start
     canvas.addEventListener('mousedown', load_game);
 
