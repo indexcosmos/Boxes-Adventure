@@ -7,26 +7,41 @@
         @viewport{
             width: device-width;
         }
-
     </style>
 </head>
 <body>
 
-<canvas id="canvas" style="border:1px solid black;"></canvas>
+<canvas id="gameboard" style="border:1px solid black;"></canvas>
 
 <h3>A, D or Arrow keys to move, W or space to jump</h3>
 
 <script>
 
-    var CURRENT_USER = Math.random().toString(36).substr(2, 9);
+    window.onload = function(){
+
+        // init the canvas
+        Canvas.init('gameboard');
+
+        // preload maps
+        Config.preload('config/maps.json', function(){
+
+            var maps = Config.get('config/maps.json');
+
+            Router.init(maps).dispatch('map', function(route, config){
+
+                Config.preload(config, Game.ready);
+
+            });
+
+        });
+
+    };
 
     // main
     var Game = {
-
         home_color: "transparent",
         box_color: "transparent",
         reward_color: "transparent",
-
         grid: {
             width: 1,
             height: 1
@@ -36,8 +51,6 @@
             y: 0,
             locked: true
         },
-        canvas: null,
-        ctx: null,
         keys: [],
         boxes: [],
         rewards: [],
@@ -55,59 +68,71 @@
             grounded: false
         },
 
-        init: function(canvas){
+        ready: function(map){
 
-            canvas.addEventListener("mousedown", Game.click, false);
-
-            this.canvas = canvas;
-
-            this.ctx = canvas.getContext("2d");
-
-        },
-
-        start_screen: function(){
+            this.map = map;
 
             //called once to create start screen
-            Game.set_background(this.map.start_screen);
-            this.canvas.width = map.width;
-            this.canvas.height = map.height;
-            this.grid.width = map.grid.width;
-            this.grid.height = map.grid.height;
+            Canvas.background(this.map.start_screen);
+            Canvas.width(this.map.width);
+            Canvas.height(this.map.height);
+            this.grid.width = this.map.grid.width;
+            this.grid.height = this.map.grid.height;
+
+            // open web socket connection
+            Client.init('ws://localhost:8081', Game.draw_remote);
+
+            // click to start
+            Event.add('load', 'mousedown', function () {
+
+                Event.remove('load');
+
+                Game.start();
+
+                Game.update();
+
+            });
 
         },
 
         start: function(){
 
-            this.canvas.width = map.width;
-            this.canvas.height = map.height;
-            this.grid.width = map.grid.width;
-            this.grid.height = map.grid.height;
-            this.friction = map.friction;
-            this.gravity = map.gravity;
-            this.player.x = map.player.x / map.grid.width;
-            this.player.y = map.player.y / map.grid.height;
+            Event.add('rez', 'mousedown', Game.click);
+
+            Keystroke.down(function (e) {
+                Game.keys[e.keyCode] = true;
+            });
+
+            Keystroke.up(function (e) {
+                Game.keys[e.keyCode] = false;
+            });
+
+            Canvas.background(this.map.background);
+            Canvas.width(this.map.width);
+            Canvas.height(this.map.height);
+
+            this.grid.width = this.map.grid.width;
+            this.grid.height = this.map.grid.height;
+
+            this.friction = this.map.friction;
+            this.gravity = this.map.gravity;
+            this.player.x = this.map.player.x / this.map.grid.width;
+            this.player.y = this.map.player.y / this.map.grid.height;
+
             this.camera.x = this.player.x;
-            //this.camera.y = map.player.y;
-            this.player.dir = map.player.dir;
-            this.player.width = map.player.width;
-            this.player.height = map.player.height;
-            this.player.speed = map.player.speed / this.grid.width;
-            this.player.profile = map.player.start_profile;
-            this.player.win = map.player.finish_profile;
+            //this.camera.y = this.map.player.y;
 
-            this.map = map;
-            this.boxes = map.boxes;
-            this.rewards = map.rewards;
-            this.home = map.home;
+            this.player.dir = this.map.player.dir;
+            this.player.width = this.map.player.width;
+            this.player.height = this.map.player.height;
+            this.player.speed = this.map.player.speed / this.grid.width;
+            this.player.profile = this.map.player.start_profile;
+            this.player.win = this.map.player.finish_profile;
 
-            //called once to clean up start screen
-            Game.set_background(this.map.background);
+            this.boxes = this.map.boxes;
+            this.rewards = this.map.rewards;
+            this.home = this.map.home;
 
-        },
-
-        set_background: function(background){
-
-            this.canvas.setAttribute('style', "background:url('"+background+"') no-repeat;");
         },
 
         update: function() {
@@ -140,20 +165,18 @@
         },
 
         click: function(event){
+
             if(Game.player.rez_limit > 0){
 
                 Game.player.rez_limit--;
 
                 rezzed.push({
-
                     type: 'blue_box',
                     x: event.pageX,
-                    y: event.pageY,
-
+                    y: event.pageY
                 });
 
             }
-
         },
 
         collide: function(dir){
@@ -184,6 +207,33 @@
                 window.location = "?map="+this.map.next_map;
 
             }
+
+        },
+
+        draw_remote: function(response){
+
+                for (var m in rezzed) {
+
+                    var sig = rezzed[m].sig;
+
+                    // update existing avatar
+                    if(response.sig == sig){
+                        rezzed[m].x = response.x;
+                        rezzed[m].y = response.y;
+                        return;
+
+                    }
+
+                }
+
+                // add new avatar
+                rezzed.push({
+                    type: 'avatar',
+                    sig: response.sig,
+                    args: response.dir,
+                    x: response.x,
+                    y: response.y
+                });
 
         },
 
@@ -489,7 +539,6 @@
         }
 
     };
-
 
     var avatar = {
 
@@ -821,7 +870,6 @@
     };
 
     // rezzables
-
     var rezzed = [];
 
     var rezzables = {
@@ -920,93 +968,15 @@
 
     };
 
-    // load map file
-    var map_file = getParameterByName('map');
-    if(!map_file) map_file = 1;
-    var script = document.createElement("script");
-    script.src = 'assets/maps/js/'+map_file+'.js';
-    document.body.appendChild( script );
-
-    // load canvas
-    var canvas = document.getElementById("canvas");
-
-    Game.init(canvas);
-
-    // open websocket connection
-    var conn = new WebSocket('ws://localhost:8081');
-
-    conn.onopen = function(e) {
-        //console.log("Connection established!");
-    };
-
-    conn.onmessage = function(e) {
-
-        var response = JSON.parse(e.data);
-
-        for (var m in rezzed) {
-
-            var sig = rezzed[m].sig;
-
-            // update existing avatar
-            if(response.sig == sig){
-                rezzed[m].x = response.x;
-                rezzed[m].y = response.y;
-                return;
-
-            }
-
-        }
-
-        // add new avatar
-        rezzed.push({
-            type: 'avatar',
-            sig: response.sig,
-            args: response.dir,
-            x: response.x,
-            y: response.y
-        });
-
-    };
-
-
-    // listen to keystrokes
-    document.body.addEventListener("keydown", function (e) {
-        Game.keys[e.keyCode] = true;
-    });
-
-    document.body.addEventListener("keyup", function (e) {
-        Game.keys[e.keyCode] = false;
-    });
-
-    // load game function
-    var load_game = function () {
-
-        // remove click to start
-        canvas.removeEventListener('mousedown', load_game);
-
-        Game.start(map);
-
-        Game.update();
-
-    };
-
-    (function () {
-        var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-        window.requestAnimationFrame = requestAnimationFrame;
-    })();
-
-    function getParameterByName(name) {
-        var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
-        return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
-    }
-
-
-    // click to start
-    canvas.addEventListener('mousedown', load_game);
-
-    // load start screen
-    window.addEventListener("load", Game.start_screen);
-
 </script>
+
+<script src="assets/js/append.js"></script>
+<script src="assets/js/canvas.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/client.js"></script>
+<script src="assets/js/event.js"></script>
+<script src="assets/js/keystroke.js"></script>
+<script src="assets/js/router.js"></script>
+
 </body>
 </html>
