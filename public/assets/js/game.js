@@ -65,13 +65,9 @@ Game = {
      * Load config
      *
      * @param config
-     * @param next
      */
-    load: function(config, next)
+    load: function(config)
     {
-        // save the next level
-        this.config.next = next;
-
         // merge default config
         this.config = Helper.mergeConfig(this.config, config);
 

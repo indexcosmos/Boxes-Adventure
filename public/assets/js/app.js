@@ -10,19 +10,19 @@ window.onload = function(){
     Config.preload('assets/config/routes.json', function(config){
 
         // dispatch router
-        Router.init(config).dispatch('map', function(route, config){
+        Router.init(config).dispatch('map', function(route, map){
 
             // initialize the game
             Game.init('gameboard');
 
-            // get next map
-            var next = config.next;
-
             // pre-load map config
-            Config.preload(config.config, function(config){
+            Config.preload(map.config, function(config){
+
+                // set the next map
+                config.next = map.next;
 
                 // load the game
-                Game.load(config, next);
+                Game.load(config);
 
             });
 
