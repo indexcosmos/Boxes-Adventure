@@ -17,18 +17,19 @@
 
 <script>
 
+    // Request flow starts here...
     window.onload = function(){
 
         // init the canvas
         Canvas.init('gameboard');
 
         // preload maps
-        Config.preload('config/maps.json', function(){
+        Config.preload('assets/config/maps.json', function(config){
 
-            var maps = Config.get('config/maps.json');
+            // dispatch router
+            Router.init(config).dispatch('map', function(route, config){
 
-            Router.init(maps).dispatch('map', function(route, config){
-
+                // run game when map config is loaded
                 Config.preload(config, Game.ready);
 
             });
@@ -37,8 +38,9 @@
 
     };
 
+    // todo move into request flow
     // main
-    var Game = {
+    var Game_old = {
         home_color: "transparent",
         box_color: "transparent",
         reward_color: "transparent",
@@ -212,28 +214,28 @@
 
         draw_remote: function(response){
 
-                for (var m in rezzed) {
+            for (var m in rezzed) {
 
-                    var sig = rezzed[m].sig;
+                var sig = rezzed[m].sig;
 
-                    // update existing avatar
-                    if(response.sig == sig){
-                        rezzed[m].x = response.x;
-                        rezzed[m].y = response.y;
-                        return;
-
-                    }
+                // update existing avatar
+                if(response.sig == sig){
+                    rezzed[m].x = response.x;
+                    rezzed[m].y = response.y;
+                    return;
 
                 }
 
-                // add new avatar
-                rezzed.push({
-                    type: 'avatar',
-                    sig: response.sig,
-                    args: response.dir,
-                    x: response.x,
-                    y: response.y
-                });
+            }
+
+            // add new avatar
+            rezzed.push({
+                type: 'avatar',
+                sig: response.sig,
+                args: response.dir,
+                x: response.x,
+                y: response.y
+            });
 
         },
 
@@ -542,11 +544,11 @@
 
     var avatar = {
 
-        report: function(dir, x, y){
+        _report: function(dir, x, y){
 
             if(locations.x(x) > 0.5 || locations.y(y) > 0.5){
 
-                conn.send(JSON.stringify({sig: CURRENT_USER, dir: dir, x: x, y: y}));
+                Client.getConnection().send(JSON.stringify({sig: CURRENT_USER, dir: dir, x: x, y: y}));
 
             }
 
@@ -555,7 +557,7 @@
         left: function(ctx, x, y, is_remote){
 
             // report location
-            if(!is_remote) avatar.report('left', x, y);
+            if(!is_remote) avatar._report('left', x, y);
 
             // player_l
             ctx.save();
@@ -630,7 +632,7 @@
         right: function(ctx, x, y, is_remote){
 
             // report location
-            if(!is_remote) avatar.report('right', x, y);
+            if(!is_remote) avatar._report('right', x, y);
 
             // player_r
             ctx.save();
@@ -705,7 +707,7 @@
         down_left: function(ctx, x, y, is_remote){
 
             // report location
-            if(!is_remote) avatar.report('down_left', x, y);
+            if(!is_remote) avatar._report('down_left', x, y);
 
             // player_down_l
             y+=6;
@@ -793,7 +795,7 @@
         down_right: function(ctx, x, y, is_remote){
 
             // report location
-            if(!is_remote) avatar.report('down_right', x, y);
+            if(!is_remote) avatar._report('down_right', x, y);
 
             // player_down_r
             y+=6;
@@ -970,13 +972,21 @@
 
 </script>
 
-<script src="assets/js/append.js"></script>
-<script src="assets/js/canvas.js"></script>
-<script src="assets/js/config.js"></script>
-<script src="assets/js/client.js"></script>
-<script src="assets/js/event.js"></script>
-<script src="assets/js/keystroke.js"></script>
-<script src="assets/js/router.js"></script>
+<!-- Game scripts -->
+<script src="assets/js/game.js"></script>
+<script src="assets/js/game/map.js"></script>
+<script src="assets/js/game/prop.js"></script>
+<script src="assets/js/game/avatar.js"></script>
+<script src="assets/js/game/avatar.js"></script>
+
+<!-- Helper scripts -->
+<script src="assets/js/lib/append.js"></script>
+<script src="assets/js/lib/canvas.js"></script>
+<script src="assets/js/lib/config.js"></script>
+<script src="assets/js/lib/client.js"></script>
+<script src="assets/js/lib/event.js"></script>
+<script src="assets/js/lib/keystroke.js"></script>
+<script src="assets/js/lib/router.js"></script>
 
 </body>
 </html>

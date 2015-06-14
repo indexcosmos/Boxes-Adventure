@@ -19,6 +19,13 @@ Client = {
 
         }
 
+    },
+
+    getConnection: function() {
+
+        return this.connection;
+
     }
+
 
 };

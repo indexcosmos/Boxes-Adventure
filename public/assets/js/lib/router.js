@@ -25,7 +25,6 @@ Router = {
         }
 
         return callback(route, this.config[route]);
-
     },
 
     match: function(route)
