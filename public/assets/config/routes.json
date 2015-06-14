@@ -1,0 +1,18 @@
+{
+
+  "FirstRound": {
+    "config": "assets/config/maps/first.json",
+    "next": "SecondRound"
+  },
+
+  "SecondRound": {
+    "config": "assets/config/maps/second.json",
+    "next": "ThirdRound"
+  },
+
+  "ThirdRound": {
+    "config": "assets/config/maps/third.json",
+    "next": "FirstRound"
+  }
+
+}

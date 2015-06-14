@@ -9,7 +9,6 @@
   "gravity":0.3,
   "background":"assets/images/1.png",
   "start_screen":"assets/images/start.png",
-  "next_map":"2",
   "player":{
     "x":500,
     "y":350,
@@ -20,7 +19,7 @@
     "start_profile":"box",
     "finish_profile":"circle"
   },
-  "boxes":[
+  "blocks":[
     {
       "x":0,
       "y":395,

@@ -22,7 +22,9 @@ Canvas = {
 
         this.context = this.element.getContext("2d");
 
-        window.requestAnimationFrame = Canvas.frame;
+        window.requestAnimationFrame = this.frame;
+
+        return this;
     },
 
     /**
@@ -30,8 +32,8 @@ Canvas = {
      *
      * @param url
      */
-    background: function(url){
-
+    setBackground: function(url)
+    {
         this.element.setAttribute('style', "background:url('"+url+"') no-repeat;");
     },
 
@@ -40,7 +42,7 @@ Canvas = {
      *
      * @param width
      */
-    width: function(width)
+    setWidth: function(width)
     {
         this.element.width = width;
     },
@@ -50,9 +52,25 @@ Canvas = {
      *
      * @param height
      */
-    height: function(height)
+    setHeight: function(height)
     {
         this.element.height = height;
+    },
+
+    /**
+     * Get element width
+     */
+    getWidth: function()
+    {
+        return this.element.width;
+    },
+
+    /**
+     * Get element height
+     */
+    getHeight: function()
+    {
+        return this.element.height;
     }
 
 };

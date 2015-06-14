@@ -5,12 +5,21 @@ Client = {
      * Open web socket connection
      *
      * @param url
-     * @param callback
      */
-    init: function(url, callback) {
-
+    init: function(url)
+    {
         this.connection = new WebSocket(url);
 
+        return this;
+    },
+
+    /**
+     * Listen to connection
+     *
+     * @param callback
+     */
+    listen: function(callback)
+    {
         this.connection.onmessage = function(e){
 
             var response = JSON.parse(e.data);
@@ -18,13 +27,16 @@ Client = {
             callback(response);
 
         }
-
     },
 
-    getConnection: function() {
-
+    /**
+     * Get the connection
+     *
+     * @returns {WebSocket|*}
+     */
+    getConnection: function()
+    {
         return this.connection;
-
     }
 
 

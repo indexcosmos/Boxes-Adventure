@@ -10,52 +10,59 @@ Router = {
         return this;
     },
 
-    dispatch: function(param, callback){
+    /**
+     * Dispatch the route callback
+     *
+     * @param param
+     * @param callback
+     */
+    dispatch: function(param, callback)
+    {
+        var route = Router.getParam(param);
 
-        var route;
-
-        if (route = Router.getParam(param) && Router.match(route)) {
-
-            // route found
-
-        } else {
+        if (!Router.match(route)) {
 
             route = Router.first();
 
         }
 
-        return callback(route, this.config[route]);
+        callback(route, this.config[route]);
     },
 
+    /**
+     * Match route to config
+     *
+     * @param route
+     * @returns {*|boolean}
+     */
     match: function(route)
     {
-        for (var m in this.config) {
-
-            if (route == m) {
-
-                return true;
-
-            }
-
-        }
-
-        return false;
+        return route && typeof this.config[route] != 'undefined';
     },
 
-    first: function(){
-
+    /**
+     * Get first key in config
+     *
+     * @returns {string}
+     */
+    first: function()
+    {
         for (var m in this.config) break;
 
         return m;
-
     },
 
-    getParam: function(name) {
-
+    /**
+     * Get URI param
+     *
+     * @param name
+     * @returns {Array|{index: number, input: string}|string}
+     */
+    getParam: function(name)
+    {
         var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
 
         return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
-
     }
 
 };
