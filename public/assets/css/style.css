@@ -1,0 +1,8 @@
+
+@viewport{
+    width: device-width;
+}
+
+canvas{
+    border:1px solid black;
+}
