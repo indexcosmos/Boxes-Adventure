@@ -1,0 +1,27 @@
+{
+  "name": "indexcosmos/Boxes-Adventure",
+  "description": "Boxes Adventure!",
+  "homepage": "http://robotbananas.com",
+  "keywords": ["canvas game", "html5 game", "websocket game", "php game"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Kimberly Drzewicki",
+      "email": "kdrewdesigns@gmail.com",
+      "role": "Designer"
+    },
+    {
+      "name": "Ryan Tulino",
+      "email": "rtulino@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "BoxesAdventure\\": "src"
+    }
+  },
+  "require": {
+    "cboden/ratchet": "^0.3.3"
+  }
+}

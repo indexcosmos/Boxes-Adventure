@@ -1,0 +1,18 @@
+{
+
+  "1": {
+    "config": "assets/config/maps/first.json",
+    "next": "2"
+  },
+
+  "2": {
+    "config": "assets/config/maps/second.json",
+    "next": "3"
+  },
+
+  "3": {
+    "config": "assets/config/maps/third.json",
+    "next": "4"
+  }
+
+}
