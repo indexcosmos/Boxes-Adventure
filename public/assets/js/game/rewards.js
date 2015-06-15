@@ -1,15 +1,13 @@
 var Rewards;
 Rewards = {
 
-    fillStyle: 'black',
+    fillStyle: 'transparent',
 
     init: function()
     {
         Dispatcher.add('before.update', 'before.update', function($){
             Rewards.draw($.detail);
         });
-
-        return this;
     },
 
     draw: function($)

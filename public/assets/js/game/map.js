@@ -9,6 +9,8 @@ Map = {
 
     block_color: 'transparent',
 
+    home_color: 'transparent',
+
     init: function()
     {
         Dispatcher.add('before.update', 'before.update', function($){
@@ -18,8 +20,6 @@ Map = {
         Dispatcher.add('after.update', 'after.update', function($){
             Map.after($.detail);
         });
-        
-        return this;
     },
 
     /**
@@ -112,7 +112,7 @@ Map = {
      */
     _home: function(ctx, config)
     {
-        ctx.fillStyle = config.color;
+        ctx.fillStyle = this.home_color;
 
         ctx.fillRect(config.x, config.y, config.width, config.height);
     }

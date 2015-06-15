@@ -13,19 +13,18 @@ Property = {
         });
 
         // listen for remote players
-        Dispatcher.add('request', 'request', function(response){
-            Property.request(response);
+        Dispatcher.add('request', 'request', function($){
+            Property.request($.detail);
         });
 
         Dispatcher.add('before.update', 'before.update', function($){
             Property.draw($.detail);
         });
-
-        return this;
     },
 
     click: function(event)
     {
+        log(Property.properties);
         if(Game.config.player.build && Game.config.player.rez_limit > 0){
 
             Game.config.player.rez_limit--;
@@ -34,7 +33,7 @@ Property = {
                 type: this.rez_object,
                 x: event.pageX,
                 y: event.pageY,
-                args:{},
+                dir: null,
                 sig: 'rez_object'
             });
 
@@ -49,17 +48,17 @@ Property = {
 
             var y = this.properties[m].y;
 
-            var args = this.properties[m].args;
+            var dir = this.properties[m].dir;
 
             var type = this.properties[m].type;
 
-            var coordinates = this[type]($.context, x, y, args);
+            var coordinates = this[type]($.context, x, y, dir);
 
             if(coordinates){
 
-                var dir = Helper.colCheck($.config.player, coordinates, true);
+                var col = Helper.colCheck($.config.player, coordinates, true);
 
-                Player.collide(dir);
+                Player.collide(col);
 
             }
         }
@@ -79,6 +78,8 @@ Property = {
 
                 this.properties[m].y = response.y;
 
+                this.properties[m].dir = response.dir;
+
                 return;
             }
 
@@ -88,7 +89,7 @@ Property = {
         this.properties.push({
             type:   'avatar',
             sig:    response.sig,
-            args:   response.dir,
+            dir:    response.dir,
             x:      response.x,
             y:      response.y
         });

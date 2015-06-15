@@ -12,8 +12,6 @@ Player = {
         Dispatcher.add('after.update', 'after.update', function($){
             Player.after($.detail);
         });
-
-        return this;
     },
 
     /**

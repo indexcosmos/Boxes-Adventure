@@ -15,8 +15,7 @@ Game = {
             x: 0,
             y: 0,
             width: 0,
-            height: 0,
-            color: 'black'
+            height: 0
         },
         player: {
             dir: "l",
@@ -58,6 +57,8 @@ Game = {
         Player.init();
 
         Rewards.init();
+
+        HUD.init();
 
         Avatar.init(Helper.random(32));
     },
@@ -119,9 +120,6 @@ Game = {
     update: function()
     {
         Canvas.context.clearRect(0, 0, Canvas.getWidth(), Canvas.getHeight());
-
-        Canvas.context.fillText('Profile: '+Game.config.player.profile, 2, 10);
-        Canvas.context.fillText('To win: '+Game.config.player.finish_profile, 2, 20);
 
         Dispatcher.dispatch('before.update', {config: Game.config, context: Canvas.context});
 
