@@ -25,8 +25,10 @@ Dispatcher = {
      *
      * @param {string} event
      */
-    remove: function(event)
+    remove: function(event, type)
     {
+        document.removeEventListener(type, this.events[event]);
+
         delete this.events[event];
     },
 
