@@ -28,6 +28,7 @@ Game = {
             velX: 0,
             velY: 0,
             jump: 2.0,
+            build: false,
             rez_limit: 0,
             double_jump: 1.2,
             jumping: false,
@@ -90,7 +91,7 @@ Game = {
     start: function()
     {
         // remove click to start
-        Dispatcher.remove('load');
+        Dispatcher.remove('load', 'mousedown');
 
         // open web socket connection
         Client.listen(Game.request);
@@ -119,6 +120,9 @@ Game = {
     {
         Canvas.context.clearRect(0, 0, Canvas.getWidth(), Canvas.getHeight());
 
+        Canvas.context.fillText('Profile: '+Game.config.player.profile, 2, 10);
+        Canvas.context.fillText('To win: '+Game.config.player.finish_profile, 2, 20);
+
         Dispatcher.dispatch('before.update', {config: Game.config, context: Canvas.context});
 
         // update game config based on user input
@@ -126,9 +130,9 @@ Game = {
 
         Dispatcher.dispatch('after.update', {config: Game.config, context: Canvas.context});
 
-        // update the canvas
         var frame = Canvas.frame;
 
+        // update the canvas
         frame(Game.update);
     },
 

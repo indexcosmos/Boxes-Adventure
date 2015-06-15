@@ -27,7 +27,7 @@ Property.blue_box = function(ctx, x, y, dir){
     var height = 40;
 
     x -= width;
-    y -= height * 2;
+    y -= height;
 
     ctx.beginPath();
     ctx.fillStyle = "rgb(50, 117, 200)";

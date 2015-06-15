@@ -17,8 +17,7 @@ Player.profiles.square = function()
 
     Game.config.player.double_jump = 1.0;
 
-    //todo rebuild rez
-    //if(!rezzed.length) Game.player.rez_limit = map.player.rez_limit;
+    Game.config.player.build = true;
 };
 
 /**

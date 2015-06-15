@@ -3,14 +3,19 @@ Property = {
 
     rez_object: 'blue_box',
 
-    properties: {},
+    properties: [],
 
     init: function()
     {
         // add click to rez
-        Dispatcher.add('rez', 'mousedown', Property.click);
+        Dispatcher.add('rez', 'mousedown', function(event){
+            Property.click(event);
+        });
 
-        Dispatcher.add('request', 'request', Property.request);
+        // listen for remote players
+        Dispatcher.add('request', 'request', function(response){
+            Property.request(response);
+        });
 
         Dispatcher.add('before.update', 'before.update', function($){
             Property.draw($.detail);
@@ -21,7 +26,7 @@ Property = {
 
     click: function(event)
     {
-        if(Game.config.player.rez_limit > 0){
+        if(Game.config.player.build && Game.config.player.rez_limit > 0){
 
             Game.config.player.rez_limit--;
 
@@ -29,7 +34,8 @@ Property = {
                 type: this.rez_object,
                 x: event.pageX,
                 y: event.pageY,
-                dir:null
+                args:{},
+                sig: 'rez_object'
             });
 
         }
