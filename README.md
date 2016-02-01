@@ -1,11 +1,21 @@
-# Boxes-Adventure 
+# Boxes-Adventure
 
-Introduction 
+Introduction :
 
-Game Play 
+Welcome to Boxes-Adventure, the game that makes you think outside the box!
 
-Objectives 
+Game Play :
 
-Solve Maps 
+Player must touch shapes to complete maps.  
 
-Accomplishments
+Objectives
+
+Use rectangles, hexagons and polygons for power-ups and power-downs.
+
+Solve Maps :
+
+Each shape is a key to continue the map and overcome the next objective.
+
+Accomplishments :
+
+Earn badges, stickers including customized skins during special events.
